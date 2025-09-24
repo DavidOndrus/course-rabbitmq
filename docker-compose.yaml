@@ -1,0 +1,58 @@
+services:
+  sails-api:
+    build: sails-api
+    command: npm run dev
+    volumes:
+      - ./sails-api:/app
+    environment:
+      PORT: 8080
+      NODE_ENV: development
+    ports:
+      - 8080:8080
+  feathers-orders:
+    build: feathers-orders
+    command: npm run dev
+    volumes:
+      - ./feathers-orders:/app
+    environment:
+      PORT: 8080
+      NODE_ENV: development
+  feathers-notifications:
+    build: feathers-notifications
+    command: npm run dev
+    volumes:
+      - ./feathers-notifications:/app
+    environment:
+      PORT: 8080
+      NODE_ENV: development
+  feathers-accounts:
+    build: feathers-accounts
+    command: npm run dev
+    volumes:
+      - ./feathers-accounts:/app
+    environment:
+      PORT: 8080
+      NODE_ENV: development
+  mongo:
+    image: mongo:8.0.14
+    volumes:
+      - mongodbdata:/data/db
+  mongo-express:
+    image: mongo-express:1.0.0-alpha
+    depends_on:
+      - mongo
+    ports:
+      - 8081:8081
+  rabbitmq:
+    image: rabbitmq:4.1.4-management-alpine
+    hostname: rabbitmq-local
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+    ports:
+      - 15672:15672
+volumes:
+  mongodbdata:
+  rabbitmqdata:
