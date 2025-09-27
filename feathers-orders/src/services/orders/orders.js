@@ -12,6 +12,7 @@ import {
   ordersQueryResolver
 } from './orders.schema.js'
 import { OrdersService, getOptions } from './orders.class.js'
+import {publishCreatedEvent} from './hooks/publish-created-event.js';
 
 export const ordersPath = 'orders'
 export const ordersMethods = ['find', 'get', 'create', 'patch', 'remove']
@@ -42,7 +43,8 @@ export const orders = app => {
       remove: []
     },
     after: {
-      all: []
+      all: [],
+      create: [publishCreatedEvent]
     },
     error: {
       all: []
