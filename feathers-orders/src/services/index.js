@@ -1,3 +1,5 @@
+import {orders} from './orders/orders.js'
+
 export const services = app => {
-  // All services will be registered here
+  app.configure(orders)
 }
