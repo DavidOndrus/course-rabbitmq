@@ -53,6 +53,10 @@ services:
       RABBITMQ_DEFAULT_PASS: rabbitmq
     ports:
       - 15672:15672
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - 8025:8025
 volumes:
   mongodbdata:
   rabbitmqdata:
