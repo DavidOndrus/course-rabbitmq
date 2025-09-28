@@ -58,8 +58,13 @@ const amqpListenerChannel = await amqpConnection.createChannel();
 await amqpListenerChannel.assertQueue('feathers-notifications');
 await amqpListenerChannel.bindQueue('feathers-notifications', 'amq.topic', 'order.#');
 await amqpListenerChannel.consume('feathers-notifications', message => {
-  console.log(message.content.toString());
-  amqpListenerChannel.ack(message);
+  try {
+    console.log(message.content.toString());
+    amqpListenerChannel.ack(message);
+  } catch (error) {
+    console.error('Error processing message:', error);
+    amqpListenerChannel.nack(message, false, false);
+  }
 });
 
 export { app }
