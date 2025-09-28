@@ -56,6 +56,10 @@ app.hooks({
 const amqpConnection = await amqplib.connect('amqp://rabbitmq:rabbitmq@rabbitmq');
 const amqpListenerChannel = await amqpConnection.createChannel();
 await amqpListenerChannel.assertQueue('feathers-accounts');
-await amqpListenerChannel.bindQueue('feathers-accounts', 'amq.topic', 'orders.#');
+await amqpListenerChannel.bindQueue('feathers-accounts', 'amq.topic', 'order.#');
+await amqpListenerChannel.consume('feathers-accounts', message => {
+  console.log(message.content.toString());
+  amqpListenerChannel.ack(message);
+});
 
 export { app }
