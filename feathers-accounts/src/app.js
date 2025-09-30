@@ -14,8 +14,8 @@ import { configurationValidator } from './configuration.js'
 import { logger } from './logger.js'
 import { logError } from './hooks/log-error.js'
 import { mongodb } from './mongodb.js'
+import { amqp } from './amqp.js'
 import { services } from './services/index.js'
-import amqplib from 'amqplib'
 
 const app = express(feathers())
 
@@ -53,32 +53,6 @@ app.hooks({
   teardown: []
 })
 
-const amqpConnection = await amqplib.connect('amqp://rabbitmq:rabbitmq@rabbitmq');
-const amqpListenerChannel = await amqpConnection.createChannel();
-await amqpListenerChannel.assertQueue('feathers-accounts');
-await amqpListenerChannel.bindQueue('feathers-accounts', 'amq.topic', 'order.#');
-await amqpListenerChannel.consume('feathers-accounts', async message => {
-  console.log(message.content.toString());
-
-  const order = JSON.parse(message.content.toString());
-
-  try {
-    await app.service('accounts').patch(null, {
-      $inc: {points: 1},
-      $setOnInsert: {owner: order.author},
-    }, {
-      query: {
-        owner: order.author,
-      },
-      mongodb: {
-        upsert: true,
-      },
-    });
-  } catch (error) {
-    return amqpListenerChannel.nack(message);
-  }
-
-  amqpListenerChannel.ack(message);
-});
+app.configure(amqp)
 
 export { app }
