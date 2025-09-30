@@ -1,4 +1,5 @@
 import amqplib from 'amqplib';
+import onOrderCreated from './events/order.created.js';
 
 export const amqp = async app => {
   const amqpConnection = await amqplib.connect('amqp://rabbitmq:rabbitmq@rabbitmq');
@@ -6,26 +7,18 @@ export const amqp = async app => {
   await amqpListenerChannel.assertQueue('feathers-accounts');
   await amqpListenerChannel.bindQueue('feathers-accounts', 'amq.topic', 'order.#');
   await amqpListenerChannel.consume('feathers-accounts', async message => {
-    console.log(message.content.toString());
+    const {routingKey} = message.fields;
+    const messageBody = JSON.parse(message.content.toString());
 
-    const order = JSON.parse(message.content.toString());
-
-    try {
-      await app.service('accounts').patch(null, {
-        $inc: {points: 1},
-        $setOnInsert: {owner: order.author},
-      }, {
-        query: {
-          owner: order.author,
-        },
-        mongodb: {
-          upsert: true,
-        },
-      });
-    } catch (error) {
-      return amqpListenerChannel.nack(message);
+    switch (routingKey) {
+      case 'order.created': {
+        await onOrderCreated(app, amqpListenerChannel, messageBody, message);
+        break;
+      }
+      default: {
+        amqpListenerChannel.ack(message);
+        break;
+      }
     }
-
-    amqpListenerChannel.ack(message);
   });
 }
