@@ -15,7 +15,7 @@ import { logger } from './logger.js'
 import { logError } from './hooks/log-error.js'
 import { mongodb } from './mongodb.js'
 import { services } from './services/index.js'
-import amqplib from 'amqplib'
+import { amqp } from './amqp.js';
 
 const app = express(feathers())
 
@@ -55,9 +55,6 @@ app.hooks({
 
 app.logger = logger;
 
-const amqpConnection = await amqplib.connect('amqp://rabbitmq:rabbitmq@rabbitmq');
-app.logger.info('Connected to AMQP');
-
-app.amqpPublisherChannel = await amqpConnection.createChannel();
+app.configure(amqp);
 
 export { app }
