@@ -12,6 +12,7 @@ import {
   accountsQueryResolver
 } from './accounts.schema.js'
 import { AccountsService, getOptions } from './accounts.class.js'
+import {publishChangedEvent} from './hooks/publish-changed-event.js';
 
 export const accountsPath = 'accounts'
 export const accountsMethods = ['find', 'get', 'create', 'patch', 'remove']
@@ -54,7 +55,8 @@ export const accounts = app => {
       remove: []
     },
     after: {
-      all: []
+      all: [],
+      patch: [publishChangedEvent],
     },
     error: {
       all: []

@@ -5,6 +5,7 @@ export const amqp = async app => {
   const amqpListenerChannel = await amqpConnection.createChannel();
   await amqpListenerChannel.assertQueue('feathers-notifications');
   await amqpListenerChannel.bindQueue('feathers-notifications', 'amq.topic', 'order.#');
+  await amqpListenerChannel.bindQueue('feathers-notifications', 'amq.topic', 'account.changed');
   await amqpListenerChannel.consume('feathers-notifications', async message => {
     const {routingKey} = message.fields;
     const messageBody = JSON.parse(message.content.toString());

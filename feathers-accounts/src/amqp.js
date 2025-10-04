@@ -21,8 +21,6 @@ export const amqp = async app => {
     try {
       switch (routingKey) {
         case 'order.created': {
-          // Simulate error for deadletter
-          throw new Error('Error');
           await onOrderCreated(app, amqpListenerChannel, messageBody, message);
           break;
         }
@@ -36,4 +34,6 @@ export const amqp = async app => {
       amqpListenerChannel.nack(message, false, false);
     }
   });
+
+  app.amqpPublisherChannel = await amqpConnection.createChannel();
 }
