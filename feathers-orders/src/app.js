@@ -53,8 +53,11 @@ app.hooks({
   teardown: []
 })
 
+app.logger = logger;
+
 const amqpConnection = await amqplib.connect('amqp://rabbitmq:rabbitmq@rabbitmq');
-const amqpPublisherChannel = await amqpConnection.createChannel();
-app.amqpPublisherChannel = amqpPublisherChannel;
+app.logger.info('Connected to AMQP');
+
+app.amqpPublisherChannel = await amqpConnection.createChannel();
 
 export { app }

@@ -1,7 +1,7 @@
 export const publishCreatedEvent = async context => {
-  console.log(`Running hook publish-created-event on ${context.path}.${context.method}`)
-  console.log(context.result);
-  const content = Buffer.from(JSON.stringify(context.result));
-  console.log(content);
-  context.app.amqpPublisherChannel.publish('amq.topic', 'order.created', content)
+  const orderStringified = JSON.stringify(context.result);
+  context.app.logger.info('Publishing event order.created');
+  context.app.logger.debug(`Publishing event order.created with content: ${orderStringified}`);
+
+  context.app.amqpPublisherChannel.publish('amq.topic', 'order.created', Buffer.from(orderStringified))
 }

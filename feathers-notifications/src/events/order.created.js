@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 
 export default async function onOrderCreated(app, amqpListenerChannel, body, message) {
-  const mail = await nodemailer.createTransport({
+  await nodemailer.createTransport({
     host: 'mailhog',
     port: 1025,
     secure: false,
@@ -13,7 +13,7 @@ export default async function onOrderCreated(app, amqpListenerChannel, body, mes
     html: `<b>Order with ${body.item} will be shipped in 1 day</b>`,
   });
 
-  console.log('Message sent:', mail.messageId);
+  app.logger.debug(`Email sent to ${body.author}`);
 
   await amqpListenerChannel.ack(message);
 }

@@ -54,5 +54,6 @@ app.hooks({
 })
 
 app.configure(amqp)
+app.logger = logger;
 
 export { app }
