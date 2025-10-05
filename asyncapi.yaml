@@ -1,0 +1,56 @@
+asyncapi: 3.0.0
+info:
+  title: Marketplace backend
+  version: '1.0.0'
+servers:
+  local:
+    host: rabbitmq:rabbitmq@rabbitmq
+    protocol: amqp
+    description: This is RabbitMQ message broker.
+channels:
+  order.created:
+    address: 'order.created'
+    messages:
+      orderCreated:
+        payload:
+          type: object
+          properties:
+            _id:
+              type: string
+              example: 68e28b6f25bb700dfbc51de8
+            author:
+              type: string
+              example: David
+            item:
+              type: string
+              example: Car
+            price:
+              type: number
+              example: 1300
+  account.changed:
+    address: 'account.changed'
+    messages:
+      accountChanged:
+        payload:
+          type: object
+          properties:
+            _id:
+              type: string
+              example: 68e28b6f25bb700dfbc51de8
+            owner:
+              type: string
+              example: David
+            points:
+              type: number
+              example: 1
+operations:
+  publishOrderCreated:
+    action: 'send'
+    description: Application "feathers-orders" publishes this message, application "feathers-notifications" and "feathers-accounts" subscribe to it.
+    channel:
+      $ref: '#/channels/order.created'
+  publishAccountChanged:
+    action: 'send'
+    description: Application "feathers-accounts" publishes this message, application "feathers-notifications" subscribes to it.
+    channel:
+      $ref: '#/channels/account.changed'
