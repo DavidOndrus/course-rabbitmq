@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-export default async function onOrderCreated(app, amqpListenerChannel, body, message) {
+export default async function accountChanged(app, amqpListenerChannel, body, message) {
   await nodemailer.createTransport({
     host: 'mailhog',
     port: 1025,
