@@ -34,5 +34,6 @@ module.exports.routes = {
   ***************************************************************************/
 
   'POST /orders': 'orders/create',
+  'GET /orders': 'orders/find',
 
 };
