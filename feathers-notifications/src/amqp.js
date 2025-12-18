@@ -16,6 +16,7 @@ export const amqp = async app => {
     await amqpListenerChannel.assertQueue('feathers-notifications');
     await amqpListenerChannel.bindQueue('feathers-notifications', 'amq.topic', 'order.#');
     await amqpListenerChannel.bindQueue('feathers-notifications', 'amq.topic', 'account.changed');
+    await amqpListenerChannel.bindQueue('feathers-notifications', 'amq.topic', 'account.won');
     await amqpListenerChannel.consume('feathers-notifications', async message => {
       const {routingKey} = message.fields;
       app.logger.info(`Received AMQP message with routing key ${routingKey}`);

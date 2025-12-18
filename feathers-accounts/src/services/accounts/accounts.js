@@ -13,6 +13,7 @@ import {
 } from './accounts.schema.js'
 import { AccountsService, getOptions } from './accounts.class.js'
 import {publishChangedEvent} from './hooks/publish-changed-event.js';
+import {publishWonEvent} from './hooks/publish-won-event.js';
 
 export const accountsPath = 'accounts'
 export const accountsMethods = ['find', 'get', 'create', 'patch', 'remove']
@@ -56,7 +57,7 @@ export const accounts = app => {
     },
     after: {
       all: [],
-      patch: [publishChangedEvent],
+      patch: [publishChangedEvent, publishWonEvent],
     },
     error: {
       all: []
