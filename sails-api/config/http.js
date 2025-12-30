@@ -29,16 +29,42 @@ module.exports.http = {
     *                                                                          *
     ***************************************************************************/
 
-    // order: [
-    //   'cookieParser',
-    //   'session',
-    //   'bodyParser',
-    //   'compress',
-    //   'poweredBy',
-    //   'router',
-    //   'www',
-    //   'favicon',
-    // ],
+    order: [
+      'requestLogger',
+      'securityHeaders',
+      'cookieParser',
+      'session',
+      'bodyParser',
+      'compress',
+      'poweredBy',
+      'router',
+      'www',
+      'favicon',
+    ],
+
+    requestLogger: (function() {
+      return function (req, res, next) {
+        sails.log.info(`${new Date().toISOString()} ${req.method} ${req.path}`);
+        return next();
+      };
+    })(),
+
+    securityHeaders: (function() {
+      return function (req, res, next) {
+        const appName = req.headers['x-app-name'];
+        const appVersion = req.headers['x-app-version'];
+
+        if (!appName || !appVersion) {
+          return res.status(403).send('Access denied: Missing identification headers');
+        }
+
+        if (appName !== 'frontend') {
+          return res.status(403).send('Access denied: Invalid app name');
+        }
+
+        return next();
+      };
+    })(),
 
 
     /***************************************************************************
