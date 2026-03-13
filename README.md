@@ -12,9 +12,26 @@ Start services with `docker compose up`.
 
 ## Tips: What to do next
 
-- enhance AsyncAPI spec with receive operations (currently there are only send operations)
-- implement another system event in the form of AMQP message, e.g. `account.won`
-  - feathers-accounts will be the publisher of this message
-  - feathers-notifications will be the subscriber of this message
-  - event will happen when loyalty account reaches 1000 points
-  - email notification will be sent to the user with some discount code
+### Task 1: Ensure complete technical documentation for cross-team cooperation
+
+**Motivation:**  
+Documenting both send and receive operations in the AsyncAPI specification provides a full picture of service interactions, making it easier to understand, maintain, and onboard developers. Comprehensive documentation ensures clarity regarding which services are responsible for publishing or subscribing to specific event channels.
+
+**Technical Direction:**  
+- Update the `asyncapi.yaml` specification to not only describe the messages the system sends, but also those it receives.  
+- For each channel defined, specify and differentiate between `publish` (outgoing) and `subscribe` (incoming) operations, reflecting every relevant message flow in your system.
+- Ensure all services' roles, whether publisher or subscriber, are clearly documented for each message type.
+
+---
+
+### Task 2: Send email with discount on 1000 points
+
+**Motivation:**  
+Recognizing and rewarding customers when they reach loyalty milestones encourages continued engagement and repeat business. Automatically sending a discount to customers at key points strengthens relationships and builds brand loyalty.
+
+**Technical Direction:**  
+- Implement event publishing in `feathers-accounts`:  
+  - When a loyalty account achieves 1000 points, publish an AMQP `account.won` event with user details and relevant context.
+- Implement event subscription in `feathers-notifications`:  
+  - Subscribe to the `account.won` event.
+  - On receipt, automatically generate and send an email to the affected user, including a discount code in the message body.
